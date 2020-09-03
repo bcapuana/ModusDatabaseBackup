@@ -1,0 +1,51 @@
+﻿$$ -----------------------------------------------------------------------------
+$$ Name: CommonMacros
+$$ Abstract: File contianing multiple useful macros
+$$ Author: B. Capuana - 09/02/2020
+$$
+$$ Notes:
+$$   When modifying a macro that already works, please copy the macro and change
+$$   the name to include a revision number, this will prevent programs that are
+$$   already using a macro contained in this file from having issues after the
+$$   change.
+$$ -----------------------------------------------------------------------------
+FILNAM/'CommonMacros',05.2
+DMISMD/'CommonMacros'
+
+  $$ -----------------------------------------------------------------------------
+  $$ Name: CreateDatabaseZipFile
+  $$ Abstract: Backups the database of the specified program to the specified zip
+  $$   file.
+  $$ Author: B. Capuana 09/02/2020
+  $$
+  $$ Arguments:
+  $$   1. MODUS_VERSION - Used by external executable to get the correct SQL 
+  $$      Server Instance.
+  $$   2. PROGRAM_NAME - The name of the program to backup. This can generally be
+  $$      obtained using ASSIGN/DMESYS('CURRENT_DMIS_MODULE_PATH'). See Note 1.
+  $$   3. ZIP_FILE_NAME - The name of the resulting zip file.
+  $$
+  $$ Notes:
+  $$   1. This macro calls an external program ModusDatabaseBackup.exe.
+  $$      ModusDatabaseBackup.exe handles the backup process. This executable
+  $$      should be located in the same folder as this file.
+  $$ -----------------------------------------------------------------------------
+  M(CreateDatabaseZipFile)=MACRO/MODUS_VERSION,PROGRAM_NAME,ZIP_FILE_NAME
+
+    $$ Get the current directory of this file
+    DECL/LOCAL,CHAR,512,macroFolder,modusDatabaseBackup
+    macroFolder = ASSIGN/DMESYS('CURRENT_DMIS_MODULE_PATH')
+    
+    $$ create the full path to the GetFeaturesForOutput Executable.
+    modusDatabaseBackup = ASSIGN/CONCAT(macroFolder,'ModusDatabaseBackup.exe')
+
+    $$ create the argument string
+    DECL/LOCAL,CHAR,512,dbArgs
+    dbArgs = ASSIGN/CONCAT(STR(MODUS_VERSION),' "', PROGRAM_NAME, '" "',ZIP_FILE_NAME,'"')
+
+    $$ call the executable
+    CALL/EXTERN,SYS,modusDatabaseBackup,WAIT,dbArgs
+
+  ENDMAC
+
+ENDFIL

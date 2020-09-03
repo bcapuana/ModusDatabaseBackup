@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ModusDatabaseBackup": {
+      "commandName": "Project",
+      "commandLineArgs": "1.9 122514_MAIN_0_0.DMI C:\\TEMP\\TEST.ZIP"
+    }
+  }
+}
