@@ -40,8 +40,15 @@ Press any key to continue");
             // recreate the backup directory
             Directory.CreateDirectory(backupDirectory);
 
+            string[] majorMinorVersion = modusVersion.ToString("f2").Split(new char[] { '.' });
+
             // get the version string
-            string versionString = $"0{modusVersion.ToString("F2").Replace(".", string.Empty)}";
+            string versionString = null;
+
+            if (double.Parse(majorMinorVersion[1]) > 10)
+                versionString = $"{majorMinorVersion[0]}{majorMinorVersion[1]}0";
+            else
+                versionString = $"0{modusVersion.ToString("F2").Replace(".", string.Empty)}";
 
             // get the database name
             string databaseName = $"LK_Insp_{programName}";
@@ -58,9 +65,9 @@ Press any key to continue");
             {
                 sqlCon.Open();
                 string query = @$"USE master
-ALTER DATABASE {databaseName} SET RECOVERY FULL
+ALTER DATABASE [{databaseName}] SET RECOVERY FULL
 
-BACKUP DATABASE {databaseName} TO DISK='{backupFile}' WITH FORMAT
+BACKUP DATABASE [{databaseName}] TO DISK='{backupFile}' WITH FORMAT
 ";
                 using (SqlCommand cmd = new SqlCommand(query, sqlCon))
                 {
